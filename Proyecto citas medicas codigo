@@ -1,0 +1,254 @@
+create database servicio_citas_medicas;
+use servicio_citas_medicas;
+
+create table pacientes (
+    codigo_paciente int primary key, 
+    alergias varchar(50),
+    condiciones_medicas varchar(50) not null,
+    cedula int not null,  
+    fecha_nacimiento date,
+    nombre varchar(50) not null,
+    edad int not null,
+    numero_telefono_paciente int not null,
+    prioridad varchar(10), 
+    eps varchar(50)
+);
+
+create table medicos (
+    codigo_medico int primary key, 
+    numero_licencia int not null,
+    numero_telefono varchar(50) not null,
+    correo_electronico varchar(50) not null,
+    especializacion varchar(50) not null,
+    nombre varchar(50) not null
+);
+
+create table citas (
+    id_cita int auto_increment primary key ,  
+    fecha_cita date not null,
+    hora time not null,
+    nro_consultorio int not null,
+    codigo_cita varchar(50) not null,
+    lugar varchar(50) not null,
+    motivo varchar(50) not null,
+    codigo_medico int not null, 
+    codigo_paciente int not null, 
+    foreign key (codigo_medico) references medicos(codigo_medico),
+    foreign key (codigo_paciente) references pacientes(codigo_paciente)
+);
+
+/*-------------------aqui comienzan los insert-------------------*/
+
+insert into medicos (codigo_medico, numero_licencia, numero_telefono, correo_electronico, especializacion, nombre) 
+values (1, 123456, '12312344', 'dr.perez2ll2@gmail.com', 'generalista', 'dr armando pérez'),
+       (2, 234567, '22245678', 'dra.gomez3bn4@gmail.com', 'pediatra', 'dra maria gómez'),
+       (3, 345678, '91829101', 'dr.martinez6an6@gmail.com', 'alergólogo', 'dr samuel martínez'),
+       (4, 456789, '01921122', 'dr.sanchez4le1@gmail.com', 'cardiólogo', 'dr andres sánchez'),
+       (5, 567890, '56789012', 'dr.lopez5ed6@gmail.com', 'ginecólogo', 'dr fernando lópez'),
+       (6, 678901, '67890123', 'dr.martinez6bc7@gmail.com', 'neumólogo', 'dr lucía martínez'),
+       (7, 789012, '78901234', 'dr.santos7le8@gmail.com', 'traumatólogo', 'dr alejandro santos'),
+       (8, 890123, '89012345', 'dr.fernandez8hd9@gmail.com', 'endocrinólogo', 'dr carla fernández');
+
+insert into pacientes (codigo_paciente, alergias, condiciones_medicas, cedula, fecha_nacimiento, nombre, edad, numero_telefono_paciente, prioridad, eps) 
+values 
+(1, 'ninguna', 'ninguna', 12345678, '1990-01-01', 'paciente andres', 66, 5551234, 'Baja', 'EPS1'), 
+(2, 'penicilina', 'asma', 23456789, '1995-02-02', 'paciente bruno', 76, 5555678, 'Baja', 'EPS2'),  
+(3, 'ninguna', 'diabetes', 34567890, '1988-03-03', 'paciente camila', 36, 5559101, 'Baja', 'EPS1'), 
+(4, 'ninguna', 'hipertensión', 45678901, '1992-04-04', 'paciente diana', 66, 5551122, 'Baja', 'EPS3'),
+(5, 'frutos secos', 'cáncer', 56789012, '1955-05-05', 'paciente elena', 69, 5553456, 'Baja', 'EPS1'),
+(6, 'lactosa', 'diabetes', 67890123, '1948-06-06', 'paciente juan', 76, 5557890, 'Baja', 'EPS2'),
+(7, 'ninguna', 'hipertensión', 78901234, '1980-07-07', 'paciente paola', 44, 5552345, 'Baja', 'EPS3'),
+(8, 'penicilina', 'ninguna', 89012345, '1975-08-08', 'paciente carlos', 49, 5556789, 'Baja', 'EPS1'),
+(9, 'ninguna', 'diabetes', 90123456, '1965-09-09', 'paciente maría', 59, 5551230, 'Baja', 'EPS2'),
+(10, 'frutos secos', 'cáncer', 12345678, '1950-10-10', 'paciente simón', 74, 5559876, 'Baja', 'EPS3');
+
+
+insert into citas (fecha_cita, hora, nro_consultorio, codigo_cita, lugar, motivo, codigo_medico, codigo_paciente) 
+values ('2024-10-15', '10:30:00', 101, 'cita-1-101', 'consultorio a101', 'consulta general', 1, 1),
+       ('2024-10-16', '11:00:00', 102, 'cita-2-102', 'consultorio b102', 'chequeo anual', 2, 1),
+       ('2024-10-18', '14:00:00', 103, 'cita-3-103', 'consultorio c103', 'revisión de alergias', 3, 3),
+       ('2024-10-19', '15:00:00', 102, 'cita-4-104', 'consultorio d104', 'consulta especializada', 4, 4),
+       ('2024-10-20', '16:00:00', 102, 'cita-5-105', 'consultorio d104', 'consulta especializada', 4, 4),
+       ('2024-10-21', '09:30:00', 101, 'cita-6-106', 'consultorio a101', 'consulta de rutina', 5, 5),
+       ('2024-10-22', '08:30:00', 102, 'cita-7-107', 'consultorio b102', 'control de diabetes', 6, 6),
+       ('2024-10-23', '10:00:00', 103, 'cita-8-108', 'consultorio c103', 'consulta de seguimiento', 7, 7),
+       ('2024-10-24', '14:00:00', 102, 'cita-9-109', 'consultorio d104', 'revisión médica', 8, 8),
+       ('2024-10-25', '11:00:00', 102, 'cita-10-110', 'consultorio b102', 'consulta general', 1, 10);
+
+/*-------------------aqui comienzan las busquedas-------------------*/
+
+select especializacion, count(*) as total_medicos 
+from medicos 
+group by especializacion; /* esta busqueda muestra cuantos medicos hay por especializacion */
+
+select c.codigo_cita, p.nombre as nombre_paciente, m.nombre as nombre_medico
+from citas c 
+inner join pacientes p on c.codigo_paciente = p.codigo_paciente 
+inner join medicos m on c.codigo_medico = m.codigo_medico; /* esta busqueda muestra el nombre de la cita, con que paciente es y que medico lo atiende */
+
+select p.codigo_paciente, p.nombre as nombre_paciente, p.alergias 
+from pacientes p; /* esta busqueda permite mirar que pacientes tienen alergias, y a que codigo estan asociados */
+
+select p.nombre as nombre_paciente, p.cedula
+from pacientes p; /* esta busqueda permite mirar que cedula tiene cada paciente */
+
+select c.codigo_cita as 'codigo cita', p.codigo_paciente as 'codigo paciente', p.nombre as 'nombre paciente', 
+m.nombre as 'nombre medico', c.nro_consultorio as 'numero consultorio', c.hora, c.motivo 
+from citas c 
+inner join medicos m on c.codigo_medico = m.codigo_medico 
+inner join pacientes p on p.codigo_paciente = c.codigo_paciente; /* en esta busqueda tenemos las citas programadas entre pacientes y que medico les toca */
+
+select alergias, count(*) as total_pacientes 
+from pacientes 
+group by alergias; /* con esta busqueda vemos cuantos pacientes tienen una misma alergia, o si no tienen ninguna */
+
+
+/*-------------------aqui comienzan los updates de las 3 tablas-------------------*/
+
+update pacientes
+set numero_telefono_paciente = 3123456, alergias = 'lactosa', condiciones_medicas = 'diabetes', edad = 34, prioridad = 'Baja'
+where codigo_paciente = 1;
+
+update medicos
+set numero_licencia = 11111111, nombre = 'dra maria magdalena'
+where codigo_medico = 3;
+
+update citas
+set fecha_cita = '2024-10-10', hora = '12:00:00', motivo = 'dolor en los hombros'
+where codigo_cita = 'cita-3-103';
+
+/*-------------------aqui comienzan los delete de las 3 tablas-------------------*/
+
+delete from citas 
+where codigo_medico = 3; /* usar este delete nos permite eliminar el codigo medico de las citas */
+
+delete from medicos
+where codigo_medico = 3; /* este delete no funcionara a menos que eliminemos primero el codigo_medico 3 de la tabla citas */
+
+delete from citas
+where codigo_cita = 'cita-1-101'; /* con este delete eliminamos una cita por medio de su nombre */
+
+delete from citas
+where codigo_paciente in (
+    select codigo_paciente from pacientes where nombre = 'paciente andres'
+); /* este delete nos permite eliminar el paciente por medio de su codigo y su nombre */
+
+delete from pacientes
+where nombre = 'paciente andres'; /* este delete no se podra hacer a menos que eliminemos primero al paciente andres en la tabla citas */
+
+
+
+/*---------- proceso almacenado citas por medico ---------------*/
+
+delimiter //
+
+create procedure calculartotalcitaspormedico()
+begin
+    declare ready int default 0;
+    declare codigo_medico int;
+    declare nombre_medico varchar(50);
+    declare total int;
+
+    declare cursor_medicos cursor for
+    select m.codigo_medico, m.nombre from medicos m;
+
+    declare continue handler for not found set ready = 1;
+
+    open cursor_medicos;
+
+    item_medico: loop
+        fetch cursor_medicos into codigo_medico, nombre_medico;
+
+        if ready then
+            leave item_medico;
+        end if;
+
+        select count(*) into total
+        from citas
+        where codigo_medico = codigo_medico;
+
+        select concat("el total de citas para el/la ", nombre_medico, " es ", total) as "total citas medico";
+    end loop;
+
+    close cursor_medicos;
+end //
+
+delimiter ;
+
+
+/*------ Edad minima y maxima proceso almacenado------*/
+
+delimiter //
+
+create procedure consultar_pacientes_por_edad_y_eps(
+    in edad_minima  int, 
+    in edad_maxima int, 
+    in eps_param varchar(50)
+)
+begin
+    select * 
+    from pacientes p
+    where p.edad between edad_minima and edad_maxima
+    and p.eps = eps_param;
+end //
+
+delimiter ;
+
+/*---------------------- modificar prioridad de pacientes ----------------------*/
+
+delimiter //
+
+create procedure actualizar_prioridad_atencion()
+begin
+    declare done int default 0;
+    declare v_codigo_paciente int;
+
+    declare cursor_pacientes cursor for
+        select codigo_paciente
+        from pacientes
+        where edad > 65
+          and condiciones_medicas in ('hipertensión', 'diabetes', 'cáncer', 'asma', 'problemas cardíacos');
+
+    start transaction;
+
+    open cursor_pacientes;
+
+    read_loop: loop
+        fetch cursor_pacientes into v_codigo_paciente;
+
+        if done then
+            leave read_loop;
+        end if;
+
+        update pacientes
+        set prioridad = 'Alta'
+        where codigo_paciente = v_codigo_paciente;
+
+    end loop;
+    close cursor_pacientes;
+    commit ;
+end //
+
+delimiter ;
+ 
+
+
+  /* --------------- Vistas para pacientes de determinada eps (EPS1) --------------- */ 
+  
+create view vista_pacientes_65_años as
+select 
+    p.codigo_paciente as 'Codigo paciente',
+    p.nombre as 'Nombre paciente',
+    p.edad as 'Edad',
+    p.eps as "EPS",
+    p.condiciones_medicas as 'Condiciones medicas',
+    p.alergias 'Alergias',
+    p.numero_telefono_paciente 'Numero de telefono',
+    p.prioridad as 'Prioridad'
+from 
+    pacientes p
+where 
+    p.edad > 65;
+    
+select * from vista_pacientes_65_años
+where eps = 'EPS2';
